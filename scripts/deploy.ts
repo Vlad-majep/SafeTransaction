@@ -7,8 +7,8 @@ async function main() {
 
   console.log("Account balance:", (await owner.getBalance()).toString());
 
-  const task = await ethers.getContractFactory("SafeShop");
-  const contract = await task.deploy(owner.address);
+  const task = await ethers.getContractFactory("SafeTransaction");
+  const contract = await task.deploy({value: 100});
 
 
   console.log("Contract address:", contract.address);

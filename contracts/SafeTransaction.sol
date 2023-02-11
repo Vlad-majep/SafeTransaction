@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
-contract SafeShop {
+contract SafeTransaction{
     address payable public seller;
     address payable public buyer;
     uint public price;
-    uint public totalSupply;
 
     enum Status {
         Created,
@@ -15,6 +14,10 @@ contract SafeShop {
     }
 
     Status public status;
+
+    function getBalance() public view returns(uint) {
+        return address(this).balance;
+    }
 
     modifier onlyBuyer {
         require(msg.sender == buyer, "You are not buyer");
@@ -31,12 +34,10 @@ contract SafeShop {
         _;
     }
 
-    constructor (
-        uint _price, uint _totalSupply)
+    constructor () payable
     {
         seller = payable(msg.sender);
-        price = _price;
-        totalSupply = _totalSupply;
+        price = msg.value / 2;
     }
 
     function confirmPurchase() external payable inStatus(Status.Created) {
@@ -50,7 +51,7 @@ contract SafeShop {
         buyer.transfer(price);
     }
 
-    function paySeller() external payable onlySeller inStatus(Status.Release) {
+    function paySeller() external  onlySeller inStatus(Status.Release) {
         status = Status.Inactive;
         seller.transfer(3 * price);
     }
